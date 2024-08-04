@@ -1,20 +1,20 @@
-.notification.pocket_button_good,
-.notification.pocket_button_bad {
+.notification.readeck_button_good,
+.notification.readeck_button_bad {
     position: fixed;
     color: #fff;
     left: 20%;
     right: 20%;
 }
 
-.notification.pocket_button_bad {
+.notification.readeck_button_bad {
     background: #e74c3c;
 }
 
-.notification.pocket_button_good {
+.notification.readeck_button_good {
     background: #1abc9c;
 }
 
-input#consumer_key {
+input#api_token {
     width: 300px;
 }
 

@@ -10,7 +10,7 @@
 	$bottomline_link = FreshRSS_Context::userConf()->bottomline_link;
 ?><ul class="horizontal-list bottom"><?php
 	if (FreshRSS_Auth::hasAccess()) {
-		
+
 		if ($bottomline_read) {
 			?><li class="item manage"><?php
 				$arUrl = array('c' => 'entry', 'a' => 'read', 'params' => array('id' => $this->entry->id()));
@@ -22,12 +22,12 @@
 			?></li><?php
 		}
 
-		$extension = Minz_ExtensionManager::findExtension('Pocket Button');
-		$pocket_button_icon = $extension->getFileUrl('add_to_pocket.svg', 'svg');
+		$extension = Minz_ExtensionManager::findExtension('Readeck Button');
+		$readeck_button_icon = $extension->getFileUrl('add_to_readeck.svg', 'svg');
 		?>
 		<li class="item manage"><?php
-			$arUrl = array('c' => 'pocketButton', 'a' => 'add', 'params' => array('id' => $this->entry->id()));
-			?><a class="item-element pocketButton" href="<?php echo Minz_Url::display($arUrl); ?>"><div class="lds-dual-ring disabled"></div><img class="icon" src="<?= $pocket_button_icon ?>" /></a><?php
+			$arUrl = array('c' => 'readeckButton', 'a' => 'add', 'params' => array('id' => $this->entry->id()));
+			?><a class="item-element readeckButton" href="<?php echo Minz_Url::display($arUrl); ?>"><div class="lds-dual-ring disabled"></div><img class="icon" src="<?= $readeck_button_icon ?>" /></a><?php
 			?></li>
 		<?php
 
