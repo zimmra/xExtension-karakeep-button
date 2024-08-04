@@ -24,7 +24,13 @@ If you get errors while trying to connect to Readeck, please check the [Readeck 
 If you'd like to translate the extension to another language please file a pull request. I'd be happy to merge it!
 
 ### Development
-<!-- TODO: pull a config lokalni instance -->
+For local development pull the repository. The prerequisite is [Docker](https://www.docker.com/) installed.
+
+Go to the repository root folder and run `docker compose up` that will start a local [FreshRSS](https://www.freshrss.org/) instance running `http://localhost:8080/`.
+
+Complete it's installation and navigate to Extensions, where you have to enable `Readeck Button`.
+
+All changes in the PHP files are loaded with each page refresh.
 
 ## Credits
 
@@ -32,4 +38,4 @@ This extension is based on [freshrss-pocket-button](https://github.com/christian
 
 Thank you very much [Christian Putzke](https://github.com/christian-putzke) for creating the original extension. I used it every day until migrating from Pocket to Readeck.
 
-<!-- TODO: icon credits -->
+Original icon is used from the original [Readeck repository](https://codeberg.org/readeck/readeck) and the outlined version is done using [Online Vector Designing Apps](https://vectordad.com/photo-to-outline/).
