@@ -3,10 +3,10 @@ if (document.readyState && document.readyState !== 'loading')
   documentReady();
 } else
 {
-  document.addEventListener('DOMContentLoaded', documentReady, false);
+  document.addEventListener('DOMContentLoaded', async () => await documentReady(), false);
 }
 
-function documentReady()
+async function documentReady()
 {
   var readeckButtons = document.querySelectorAll('#stream .flux a.readeckButton');
   for (var i = 0; i < readeckButtons.length; i++)
@@ -61,9 +61,19 @@ function documentReady()
   }
 }
 
-function add_to_readeck(readeckButton, active)
+function requestFailed(activeId, readeckButtonImg, loadingAnimation)
 {
-  var url = readeckButton.getAttribute("href");
+  delete pending_entries[activeId];
+
+  readeckButtonImg.classList.remove("disabled");
+  loadingAnimation.classList.add("disabled");
+
+  badAjax(this.status == 403);
+}
+
+async function add_to_readeck(readeckButton, active)
+{
+  const url = readeckButton.getAttribute("href");
   if (!url)
   {
     return;
@@ -76,66 +86,57 @@ function add_to_readeck(readeckButton, active)
   loadingAnimation.classList.remove("disabled");
 
   let activeId = active.getAttribute('id');
-
   if (pending_entries[activeId])
   {
     return;
   }
 
   pending_entries[activeId] = true;
-
-  let request = new XMLHttpRequest();
-
-  request.open('POST', url, true);
-  request.responseType = 'json';
-
-  request.onload = function (e)
-  {
-    delete pending_entries[activeId];
-
-    readeckButtonImg.classList.remove("disabled");
-    loadingAnimation.classList.add("disabled");
-
-    if (this.status != 200)
+  await fetch(url,
     {
-      return request.onerror(e);
-    }
+      method: "POST",
+      headers:
+      {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({
+        _csrf: context.csrf,
+      })
+    })
+    .then(response =>
+    {
+      delete pending_entries[activeId];
 
-    let response = xmlHttpRequestJson(this);
-    if (!response)
-    {
-      return request.onerror(e);
-    }
+      readeckButtonImg.classList.remove("disabled");
+      loadingAnimation.classList.add("disabled");
 
-    if (response.status === 202)
-    {
-      readeckButtonImg.setAttribute("src", readeck_button_vars.icons.added_to_readeck);
-      openNotification(readeck_button_vars.i18n.added_article_to_readeck.replace('%s', response.response.title), 'readeck_button_good');
-    } else
-    {
+      if (!response.ok)
+      {
+        requestFailed(activeId, readeckButtonImg, loadingAnimation);
+        return;
+      }
+
+      let json = response.json();
+      if (!json)
+      {
+        requestFailed(activeId, readeckButtonImg, loadingAnimation);
+        return;
+      }
+
+      if (response.status === 200)
+      {
+        readeckButtonImg.setAttribute("src", readeck_button_vars.icons.added_to_readeck);
+        openNotification(readeck_button_vars.i18n.added_article_to_readeck.replace('%s', response.response.title), 'readeck_button_good');
+        return;
+      }
+
       if (response.status === 404)
       {
         openNotification(readeck_button_vars.i18n.article_not_found, 'readeck_button_bad');
-      } else
-      {
-        openNotification(readeck_button_vars.i18n.failed_to_add_article_to_readeck.replace('%s', response.errorCode), 'readeck_button_bad');
+        return;
       }
-    }
-  };
-
-  request.onerror = function (e)
-  {
-    delete pending_entries[activeId];
-
-    readeckButtonImg.classList.remove("disabled");
-    loadingAnimation.classList.add("disabled");
-
-    badAjax(this.status == 403);
-  };
-
-  request.setRequestHeader('Content-Type', 'application/json');
-  request.send(JSON.stringify({
-    ajax: true,
-    _csrf: context.csrf
-  }));
+      openNotification(readeck_button_vars.i18n.failed_to_add_article_to_readeck.replace('%s', response.errorCode), 'readeck_button_bad');
+    })
+    .catch(() => requestFailed(activeId, readeckButtonImg, loadingAnimation));
 }
