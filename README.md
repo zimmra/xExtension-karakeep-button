@@ -1,7 +1,5 @@
 # FreshRSS Readeck Button
-A [FreshRSS](https://freshrss.org/) extension which adds a better [Readeck](https://readeck.org/en/) sharing integration.
-
-The existing Readeck sharing functionality of FreshRSS always opens a new tab which you have to manually close after sharing. You also have to stay logged in into Readeck.
+A [FreshRSS](https://freshrss.org/) extension which adds a [Readeck](https://readeck.org/en/) sharing integration.
 
 With this extension you can simply press the Readeck Button next to an article or a custom keyboard shortcut to share it with Readeck. Everything else happens in the background while you can continue reading articles without any further interruptions.
 
