@@ -12,7 +12,7 @@ async function documentReady()
   for (var i = 0; i < readeckButtons.length; i++)
   {
     let readeckButton = readeckButtons[i];
-    readeckButton.addEventListener('click', function (e)
+    readeckButton.addEventListener('click', async function (e)
     {
       if (!readeckButton)
       {
@@ -28,7 +28,7 @@ async function documentReady()
       e.preventDefault();
       e.stopPropagation();
 
-      add_to_readeck(readeckButton, active);
+      await add_to_readeck(readeckButton, active);
     }, false);
   }
 
@@ -104,7 +104,7 @@ async function add_to_readeck(readeckButton, active)
         _csrf: context.csrf,
       })
     })
-    .then(response =>
+    .then(async response =>
     {
       delete pending_entries[activeId];
 
@@ -113,30 +113,27 @@ async function add_to_readeck(readeckButton, active)
 
       if (!response.ok)
       {
+        if (response.status === 404)
+        {
+          openNotification(readeck_button_vars.i18n.article_not_found, 'readeck_button_bad');
+        }
         requestFailed(activeId, readeckButtonImg, loadingAnimation);
         return;
       }
 
-      let json = response.json();
+      let json = await response.json();
       if (!json)
       {
         requestFailed(activeId, readeckButtonImg, loadingAnimation);
+        openNotification(readeck_button_vars.i18n.failed_to_add_article_to_readeck.replace('%s', json.errorCode), 'readeck_button_bad');
         return;
       }
 
-      if (response.status === 200)
-      {
-        readeckButtonImg.setAttribute("src", readeck_button_vars.icons.added_to_readeck);
-        openNotification(readeck_button_vars.i18n.added_article_to_readeck.replace('%s', response.response.title), 'readeck_button_good');
-        return;
-      }
-
-      if (response.status === 404)
-      {
-        openNotification(readeck_button_vars.i18n.article_not_found, 'readeck_button_bad');
-        return;
-      }
-      openNotification(readeck_button_vars.i18n.failed_to_add_article_to_readeck.replace('%s', response.errorCode), 'readeck_button_bad');
+      readeckButtonImg.setAttribute("src", readeck_button_vars.icons.added_to_readeck);
+      openNotification(readeck_button_vars.i18n.added_article_to_readeck.replace('%s', json.response.title), 'readeck_button_good');
     })
-    .catch(() => requestFailed(activeId, readeckButtonImg, loadingAnimation));
+    .catch((e) =>
+    {
+      requestFailed(activeId, readeckButtonImg, loadingAnimation);
+    });
 }
