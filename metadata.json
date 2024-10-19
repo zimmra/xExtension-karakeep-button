@@ -1,8 +1,8 @@
 {
-  "name": "Readeck Button",
+  "name": "Wallabag Button",
   "author": "Joedmin",
-  "description": "Add articles to Readeck with one simple button click or a keyboard shortcut.",
-  "version": 0.3,
-  "entrypoint": "ReadeckButton",
+  "description": "Add articles to Wallabag with one simple button click or a keyboard shortcut.",
+  "version": 0.1,
+  "entrypoint": "WallabagButton",
   "type": "user"
 }
