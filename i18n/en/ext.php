@@ -32,7 +32,6 @@ return array(
       'authorized_failed' => 'Authorization failed! Wallabag API error code: %s',
       'request_access_failed' => 'Access request failed! Wallabag API error code: %s',
       'article_not_found' => 'Can\'t find article!',
-      'access_token_not_refreshed' => 'Failed to connect to Wallabag. Please reconnect in the Wallabag Extension settings.'
     )
   ),
 );

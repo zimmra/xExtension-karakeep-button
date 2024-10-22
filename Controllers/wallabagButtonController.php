@@ -3,7 +3,7 @@
 class FreshExtension_wallabagButton_Controller extends Minz_ActionController
 {
   /** @var WallabagButton\View */
-	protected $view;
+  protected $view;
 
   public function jsVarsAction(): void
   {
@@ -36,6 +36,7 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     $username = Minz_Request::paramString('username');
     $password = Minz_Request::paramString('password');
 
+    // TODO: handle leading slash in url
     FreshRSS_Context::userConf()->_attribute('wallabag_instance_url', $instance_url);
     FreshRSS_Context::userConf()->_attribute('wallabag_username', $username);
     FreshRSS_Context::userConf()->_attribute('wallabag_client_id', $client_id);
@@ -60,32 +61,6 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
 
     $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Wallabag Button'));
     Minz_Request::bad(_t('ext.wallabagButton.notifications.request_access_failed', $result['status']), $url_redirect);
-  }
-
-  private function isAccessTokenValid(): bool
-  {
-    return time() < FreshRSS_Context::userConf()->attributeInt('wallabag_access_token_expires_at');
-  }
-
-  private function refreshAccessToken(): void
-  {
-    $client_id = FreshRSS_Context::userConf()->attributeString('wallabag_client_id');
-    $client_secret = FreshRSS_Context::userConf()->attributeString('wallabag_client_secret');
-    $refresh_token = FreshRSS_Context::userConf()->attributeString('wallabag_refresh_token');
-
-    $query_params = '?grant_type=refresh_token&client_id=' . $client_id . '&client_secret=' . $client_secret . "&refresh_token=" . $refresh_token;
-    $result = $this->curlGetRequest('/oauth/v2/token' . $query_params);
-
-    if ($result['status'] == 200) {
-      $access_token = $result['response']->access_token;
-      $refresh_token = $result['response']->refresh_token;
-      $expires_in = $result['response']->expires_in;
-
-      $this->storeTokens($access_token, $refresh_token, $expires_in);
-    }
-
-    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Wallabag Button'));
-    Minz_Request::bad(_t('ext.wallabagButton.notifications.access_token_not_refreshed', $result['status']), $url_redirect);
   }
 
   public function revokeAccessAction(): void
@@ -123,7 +98,37 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     $result = $this->curlPostRequest("/api/entries.html", $post_data, true);
     $result['response'] = array('title' => $entry->title());
 
+    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Wallabag Button'));
+    Minz_Request::bad(_t('ext.wallabagButton.notifications.access_token_not_refreshed'), $url_redirect);
+
+
     echo json_encode($result);
+  }
+
+  private function isAccessTokenValid(): bool
+  {
+    return time() < FreshRSS_Context::userConf()->attributeInt('wallabag_access_token_expires_at');
+  }
+
+  private function refreshAccessToken(): void
+  {
+    $client_id = FreshRSS_Context::userConf()->attributeString('wallabag_client_id');
+    $client_secret = FreshRSS_Context::userConf()->attributeString('wallabag_client_secret');
+    $refresh_token = FreshRSS_Context::userConf()->attributeString('wallabag_refresh_token');
+
+    $query_params = '?grant_type=refresh_token&client_id=' . $client_id . '&client_secret=' . $client_secret . "&refresh_token=" . $refresh_token;
+    $result = $this->curlGetRequest('/oauth/v2/token' . $query_params);
+
+    if ($result['status'] == 200) {
+      $access_token = $result['response']->access_token;
+      $refresh_token = $result['response']->refresh_token;
+      $expires_in = $result['response']->expires_in;
+
+      $this->storeTokens($access_token, $refresh_token, $expires_in);
+      return;
+    }
+
+    // Else let it propagate and redirect user into settings
   }
 
   /**
@@ -153,7 +158,6 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
   private function getCurlBase(string $url, bool $with_token = false): \CurlHandle|false
   {
     $headers = $this->getRequestHeaders($with_token);
-
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -165,7 +169,7 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
   /**
    * @return array<string,mixed>
    */
-  private function curlGetRequest(string $endpoint, bool $with_token = false): array
+  private function curlGetRequest(string $endpoint, bool $with_token = false): array|false
   {
     $instance_url = FreshRSS_Context::userConf()->attributeString('wallabag_instance_url');
     $curl = $this->getCurlBase($instance_url . $endpoint, $with_token);
@@ -198,7 +202,6 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($post_data));
 
     $response = curl_exec($curl);
-
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $response_header = substr($response, 0, $header_size);
     $response_body = substr($response, $header_size);

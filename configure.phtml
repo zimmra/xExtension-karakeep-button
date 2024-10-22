@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /** @var WallabagButtonExtension $this */
 $instance_url = FreshRSS_Context::userConf()->attributeString('wallabag_instance_url');
@@ -13,74 +14,74 @@ $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('wallabag_key
 <form action="<?= _url('extension', 'configure', 'e', urlencode($this->getName())) ?>" method="post">
   <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken() ?>" />
   <div class="form-group">
-    <label class="group-name" for="keyboard_shortcut"><?php echo _t('ext.wallabagButton.configure.keyboard_shortcut'); ?></label>
+    <label class="group-name" for="keyboard_shortcut"><?= _t('ext.wallabagButton.configure.keyboard_shortcut'); ?></label>
     <div class="group-controls">
-      <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?php echo $keyboard_shortcut; ?>">
+      <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?= $keyboard_shortcut; ?>">
     </div>
   </div>
 
   <div class="form-group form-actions">
     <div class="group-controls">
-      <button type="submit" class="btn btn-important"><?php echo _t('gen.action.submit'); ?></button>
+      <button type="submit" class="btn btn-important"><?= _t('gen.action.submit'); ?></button>
     </div>
   </div>
 </form>
 
 <?php if ($this->isEnabled() && (empty($username) || empty($instance_url) || empty($client_id) || empty($client_secret) || empty($access_token))) : ?>
-  <form action="<?php echo _url('wallabagButton', 'requestAccess'); ?>" method="post">
-    <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
+  <form action="<?= _url('wallabagButton', 'requestAccess'); ?>" method="post">
+    <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
     <div class="form-group">
-      <label class="group-name" for="instance_url"><?php echo _t('ext.wallabagButton.configure.instance_url'); ?></label>
+      <label class="group-name" for="instance_url"><?= _t('ext.wallabagButton.configure.instance_url'); ?></label>
       <div class="group-controls">
-        <input type="url" name="instance_url" id="instance_url" title="Please enter a valid URL starting with http:// or https://" value="<?php echo $instance_url; ?>" required>
+        <input type="url" name="instance_url" id="instance_url" title="Please enter a valid URL starting with http:// or https://" value="<?= $instance_url; ?>" required>
       </div>
 
-      <label class="group-name" for="username"><?php echo _t('ext.wallabagButton.configure.username'); ?></label>
+      <label class="group-name" for="username"><?= _t('ext.wallabagButton.configure.username'); ?></label>
       <div class="group-controls">
-        <input type="text" name="username" id="username" value="<?php echo $username; ?>" required>
+        <input type="text" name="username" id="username" value="<?= $username; ?>" required>
       </div>
 
-      <label class="group-name" for="password"><?php echo _t('ext.wallabagButton.configure.password'); ?></label>
+      <label class="group-name" for="password"><?= _t('ext.wallabagButton.configure.password'); ?></label>
       <div class="group-controls">
         <input type="password" name="password" id="password" value="" required>
       </div>
 
-      <label class="group-name" for="client_id"><?php echo _t('ext.wallabagButton.configure.client_id'); ?></label>
+      <label class="group-name" for="client_id"><?= _t('ext.wallabagButton.configure.client_id'); ?></label>
       <div class="group-controls">
-        <input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>" required>
+        <input type="text" name="client_id" id="client_id" value="<?= $client_id; ?>" required>
       </div>
 
-      <label class="group-name" for="client_secret"><?php echo _t('ext.wallabagButton.configure.client_secret'); ?></label>
+      <label class="group-name" for="client_secret"><?= _t('ext.wallabagButton.configure.client_secret'); ?></label>
       <div class="group-controls">
-        <input type="password" name="client_secret" id="client_secret" value="<?php echo $client_secret; ?>" required>
+        <input type="password" name="client_secret" id="client_secret" value="<?= $client_secret; ?>" required>
       </div>
     </div>
 
     <div class="alert alert-warn">
-      <?php echo _t('ext.wallabagButton.configure.connect_description'); ?>
+      <?= _t('ext.wallabagButton.configure.connect_description'); ?>
     </div>
 
     <div class="form-group form-actions">
       <div class="group-controls">
-        <button type="submit" class="btn btn-important"><?php echo _t('ext.wallabagButton.configure.connect_to_wallabag'); ?></button>
+        <button type="submit" class="btn btn-important"><?= _t('ext.wallabagButton.configure.connect_to_wallabag'); ?></button>
       </div>
     </div>
   </form>
 <?php elseif (!$this->isEnabled()) : ?>
   <p class="alert alert-error">
-    <?php echo _t('ext.wallabagButton.configure.extension_disabled'); ?>
+    <?= _t('ext.wallabagButton.configure.extension_disabled'); ?>
   </p>
 <?php endif ?>
 
 <?php if (!empty($username) && !empty($instance_url) && !empty($client_id) && !empty($client_secret) && !empty($access_token) && !empty($refresh_token)) : ?>
   <p class="alert alert-success">
-    <?php echo _t('ext.wallabagButton.configure.connected_to_wallabag', $username, $instance_url); ?>
+    <?= _t('ext.wallabagButton.configure.connected_to_wallabag', $username, $instance_url); ?>
   </p>
-  <form action="<?php echo _url('wallabagButton', 'revokeAccess'); ?>" method="post">
-    <input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
+  <form action="<?= _url('wallabagButton', 'revokeAccess'); ?>" method="post">
+    <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
     <div class="form-group form-actions">
       <div class="group-controls">
-        <button type="submit" class="btn btn-important"><?php echo _t('ext.wallabagButton.configure.revoke_access'); ?></button>
+        <button type="submit" class="btn btn-important"><?= _t('ext.wallabagButton.configure.revoke_access'); ?></button>
       </div>
     </div>
   </form>

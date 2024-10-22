@@ -32,7 +32,6 @@ return array(
       'authorized_failed' => 'Autorizace selhala! Chyba Wallabag API: %s',
       'request_access_failed' => 'Žádost o přístup se nezdařila! Kód chyby Wallabag API: %s',
       'article_not_found' => 'Nelze najít článek!',
-      'access_token_not_refreshed' => 'Připojení k Wallabag selhalo. Prosím odhlaste se a znovu se přihlaste v nastavení rozšíření pro Wallabag.'
     )
   ),
 );
