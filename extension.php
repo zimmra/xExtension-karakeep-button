@@ -9,7 +9,7 @@ class WallabagButtonExtension extends Minz_Extension
 
     Minz_View::appendScript($this->getFileUrl('script.js', 'js'), false, false, false);
     Minz_View::appendStyle($this->getFileUrl('style.css', 'css'));
-    Minz_View::appendScript(_url('wallabagButton', 'jsVars'), false, true, false);
+    Minz_View::appendScript(strval(_url('wallabagButton', 'jsVars')), false, true, false);
 
     $this->registerController('wallabagButton');
     $this->registerViews();

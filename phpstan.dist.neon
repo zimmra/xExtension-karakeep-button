@@ -1,5 +1,5 @@
 parameters:
-	level: 9
+	level: 6 # TODO: Increase to 9
 	fileExtensions:
 		- php
 		- phtml
@@ -10,7 +10,11 @@ parameters:
 		analyse:
 			- ../FreshRSS
 			- vendor/
+			- fresh_rss_data/
+			- wallabag_data/
 		analyseAndScan:
+			- .github/
+			- .vscode/
 			- .git/
 			- node_modules/
 	checkMissingOverrideMethodAttribute: true

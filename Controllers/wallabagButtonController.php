@@ -36,7 +36,12 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     $username = Minz_Request::paramString('username');
     $password = Minz_Request::paramString('password');
 
-    // TODO: handle leading slash in url
+    // Handle leading slash
+    if (substr($instance_url, -1) == '/')
+    {
+      $instance_url = substr($instance_url, 0, -1);
+    }
+
     FreshRSS_Context::userConf()->_attribute('wallabag_instance_url', $instance_url);
     FreshRSS_Context::userConf()->_attribute('wallabag_username', $username);
     FreshRSS_Context::userConf()->_attribute('wallabag_client_id', $client_id);
@@ -59,7 +64,11 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
       exit();
     }
 
-    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Wallabag Button'));
+    $url_redirect = array(
+      'c' => 'extension',
+      'a' => 'configure',
+      'params' => array('e' => 'Wallabag Button')
+    );
     Minz_Request::bad(_t('ext.wallabagButton.notifications.request_access_failed', $result['status']), $url_redirect);
   }
 
@@ -155,7 +164,7 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     );
   }
 
-  private function getCurlBase(string $url, bool $with_token = false): \CurlHandle|false
+  private function getCurlBase(string $url, bool $with_token = false): \CurlHandle
   {
     $headers = $this->getRequestHeaders($with_token);
     $curl = curl_init();
@@ -169,7 +178,7 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
   /**
    * @return array<string,mixed>
    */
-  private function curlGetRequest(string $endpoint, bool $with_token = false): array|false
+  private function curlGetRequest(string $endpoint, bool $with_token = false): array
   {
     $instance_url = FreshRSS_Context::userConf()->attributeString('wallabag_instance_url');
     $curl = $this->getCurlBase($instance_url . $endpoint, $with_token);
@@ -229,9 +238,9 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
       }
 
       // Filter the beginning of the header which is the basic HTTP status code
-      if (strpos($header_part, ':')) {
-        $header_name = substr($header_part, 0, strpos($header_part, ':'));
-        $header_value = substr($header_part, strpos($header_part, ':') + 1);
+      if (strpos($header_part, ':') !== false) {
+        $header_name = substr($header_part, 0, intval(strpos($header_part, ':')));
+        $header_value = substr($header_part, intval(strpos($header_part, ':')) + 1);
         $headers[$header_name] = trim($header_value);
       }
     }
