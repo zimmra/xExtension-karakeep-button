@@ -30,7 +30,7 @@ input#keyboard_shortcut {
   list-style-type: decimal;
 }
 
-.disabled {
+.item-element.wallabagButton .disabled {
   display: none !important;
 }
 

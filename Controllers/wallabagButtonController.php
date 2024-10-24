@@ -107,10 +107,6 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     $result = $this->curlPostRequest("/api/entries.html", $post_data, true);
     $result['response'] = array('title' => $entry->title());
 
-    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Wallabag Button'));
-    Minz_Request::bad(_t('ext.wallabagButton.notifications.access_token_not_refreshed'), $url_redirect);
-
-
     echo json_encode($result);
   }
 
