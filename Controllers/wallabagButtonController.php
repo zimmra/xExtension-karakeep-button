@@ -10,7 +10,9 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
     $extension = Minz_ExtensionManager::findExtension('Wallabag Button');
     $this->view->wallabag_button_vars = json_encode(array(
       'instance_url' => FreshRSS_Context::userConf()->attributeString('wallabag_instance_url'),
-      'keyboard_shortcut' => FreshRSS_Context::userConf()->attributeString('wallabag_keyboard_shortcut'),
+      'keyboard_shortcut' => FreshRSS_Context::userConf()->hasParam("wallabag_keyboard_shortcut") ?
+        FreshRSS_Context::userConf()->attributeString('wallabag_keyboard_shortcut')
+        : '',
       'icons' => array(
         'added_to_wallabag' => $extension->getFileUrl('added_to_wallabag.svg', 'svg'),
       ),
