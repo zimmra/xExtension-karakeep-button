@@ -113,9 +113,7 @@ class FreshExtension_wallabagButton_Controller extends Minz_ActionController
       'url' => $entry->link(),
     );
 
-    $result = $this->curlPostRequest("/api/entries.html", $post_data, true);
-    $result['response'] = array('title' => $entry->title());
-
+    $result = $this->curlPostRequest("/api/entries", $post_data, true);
     echo json_encode($result);
   }
 
