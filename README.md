@@ -32,7 +32,7 @@ All changes in the PHP files are loaded with each page refresh.
 
 ## Credits
 
-This extension is based on [freshrss-pocket-button](https://github.com/christian-putzke/freshrss-pocket-button) (and ) and re-branded for Wallabag.
+This extension is based on [freshrss-pocket-button](https://github.com/christian-putzke/freshrss-pocket-button) and re-branded for Wallabag.
 
 Thank you very much [Christian Putzke](https://github.com/christian-putzke) for creating the original extension. I used it every day until migrating from Pocket to Wallabag.
 
