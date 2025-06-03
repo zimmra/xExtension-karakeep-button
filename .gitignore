@@ -4,3 +4,4 @@ vendor/
 karakeep_data/
 .original-code-reference/
 karakeep-openapi/
+# .other-example/

@@ -6,10 +6,9 @@ return array(
       'instance_url' => 'URL instance Karakeep',
       'api_key' => 'API klíč',
       'keyboard_shortcut' => 'Klávesová zkratka',
-      'connect_to_karakeep' => 'Konfigurovat Karakeep',
-      'extension_disabled' => 'Před konfigurací Karakeep musíte rozšíření povolit!',
+      'keyboard_shortcut_help' => 'Volitelné: Jeden znak pro klávesovou zkratku (např. "k")',
       'connected_to_karakeep' => 'Rozšíření nakonfigurováno pro instanci Karakeep: <b>%s</b>',
-      'clear_config' => 'Vymazat konfiguraci',
+      'instructions_title' => 'Pokyny k nastavení',
       'instructions' => '
         <p>Pro použití tohoto rozšíření potřebujete:</p>
         <ol>
@@ -25,7 +24,6 @@ return array(
       'failed_to_add_article_to_karakeep' => 'Přidání článku do Karakeep se nezdařilo! Kód chyby: %s',
       'ajax_request_failed' => 'Požadavek selhal!',
       'article_not_found' => 'Článek nenalezen!',
-      'config_saved' => 'Konfigurace úspěšně uložena!',
     )
   ),
 );

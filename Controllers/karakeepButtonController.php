@@ -9,10 +9,8 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
   {
     $extension = Minz_ExtensionManager::findExtension('Karakeep Button');
     $this->view->karakeep_button_vars = json_encode(array(
-      'instance_url' => FreshRSS_Context::userConf()->attributeString('karakeep_instance_url'),
-      'keyboard_shortcut' => FreshRSS_Context::userConf()->hasParam("karakeep_keyboard_shortcut") ?
-        FreshRSS_Context::userConf()->attributeString('karakeep_keyboard_shortcut')
-        : '',
+      'instance_url' => FreshRSS_Context::$user_conf->karakeep_instance_url ?: '',
+      'keyboard_shortcut' => FreshRSS_Context::$user_conf->karakeep_keyboard_shortcut ?: '',
       'icons' => array(
         'added_to_karakeep' => $extension->getFileUrl('added_to_karakeep.svg', 'svg'),
       ),
@@ -28,34 +26,6 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
     $this->view->_path('karakeepButton/vars.js');
 
     header('Content-Type: application/javascript; charset=utf-8');
-  }
-
-  public function configureAction(): void
-  {
-    $instance_url = Minz_Request::paramString('instance_url');
-    $api_key = Minz_Request::paramString('api_key');
-
-    // Handle trailing slash
-    if (substr($instance_url, -1) == '/') {
-      $instance_url = substr($instance_url, 0, -1);
-    }
-
-    FreshRSS_Context::userConf()->_attribute('karakeep_instance_url', $instance_url);
-    FreshRSS_Context::userConf()->_attribute('karakeep_api_key', $api_key);
-    FreshRSS_Context::userConf()->save();
-
-    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Karakeep Button'));
-    Minz_Request::good(_t('ext.karakeepButton.notifications.config_saved'), $url_redirect);
-  }
-
-  public function clearConfigAction(): void
-  {
-    FreshRSS_Context::userConf()->_attribute('karakeep_instance_url');
-    FreshRSS_Context::userConf()->_attribute('karakeep_api_key');
-    FreshRSS_Context::userConf()->save();
-
-    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Karakeep Button'));
-    Minz_Request::forward($url_redirect);
   }
 
   public function addAction(): void
@@ -83,11 +53,11 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
   private function getRequestHeaders(bool $with_token = false): array
   {
     $headers = array(
-      'Content-Type: application/json; charset=UTF-8',
-      'X-Accept: application/json',
+      'Content-Type: application/json',
+      'Accept: application/json',
     );
     if ($with_token) {
-      $api_key = FreshRSS_Context::userConf()->attributeString('karakeep_api_key');
+      $api_key = FreshRSS_Context::$user_conf->karakeep_api_key ?: '';
       $headers[] = "Authorization: Bearer " . $api_key;
     }
     return $headers;
@@ -106,16 +76,16 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
 
   private function curlPostRequest(string $endpoint, array $post_data, bool $with_token = false): array
   {
-    $instance_url = FreshRSS_Context::userConf()->attributeString('karakeep_instance_url');
+    $instance_url = FreshRSS_Context::$user_conf->karakeep_instance_url ?: '';
     
     // Handle trailing slash
-    if (substr($instance_url, -1) == '/') {
+    if (!empty($instance_url) && substr($instance_url, -1) == '/') {
       $instance_url = substr($instance_url, 0, -1);
     }
     
     $curl = $this->getCurlBase($instance_url . $endpoint, $with_token);
     curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($post_data, JSON_UNESCAPED_UNICODE));
+    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($post_data));
 
     $response = curl_exec($curl);
     $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
@@ -124,7 +94,7 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
     $response_headers = $this->httpHeaderToArray($response_header);
 
     return array(
-      'response' => json_decode($response_body),
+      'response' => !empty($response_body) ? json_decode($response_body) : null,
       'status' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
       'errorCode' => isset($response_headers['x-error-code']) ? intval($response_headers['x-error-code']) : curl_getinfo($curl, CURLINFO_HTTP_CODE)
     );
