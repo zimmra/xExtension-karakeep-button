@@ -47,6 +47,15 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
     );
 
     $result = $this->curlPostRequest("/api/v1/bookmarks", $post_data, true);
+    
+    // Add the entry title to our response for the notification, without sending it to Karakeep
+    if (isset($result['response']) && $result['response'] !== null) {
+      $result['response']->title = $entry->title();
+    } else {
+      // If there's no response from Karakeep, create a minimal response with the title
+      $result['response'] = (object) array('title' => $entry->title());
+    }
+    
     echo json_encode($result);
   }
 
