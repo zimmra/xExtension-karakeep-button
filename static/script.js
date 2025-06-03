@@ -8,18 +8,18 @@ if (document.readyState && document.readyState !== 'loading')
 
 async function documentReady()
 {
-  var wallabagButtons = document.querySelectorAll('#stream .flux a.wallabagButton');
-  for (var i = 0; i < wallabagButtons.length; i++)
+  var karakeepButtons = document.querySelectorAll('#stream .flux a.karakeepButton');
+  for (var i = 0; i < karakeepButtons.length; i++)
   {
-    let wallabagButton = wallabagButtons[i];
-    wallabagButton.addEventListener('click', async function (e)
+    let karakeepButton = karakeepButtons[i];
+    karakeepButton.addEventListener('click', async function (e)
     {
-      if (!wallabagButton)
+      if (!karakeepButton)
       {
         return;
       }
 
-      var active = wallabagButton.closest(".flux");
+      var active = karakeepButton.closest(".flux");
       if (!active)
       {
         return;
@@ -28,11 +28,11 @@ async function documentReady()
       e.preventDefault();
       e.stopPropagation();
 
-      await add_to_wallabag(wallabagButton, active);
+      await add_to_karakeep(karakeepButton, active);
     }, false);
   }
 
-  if (wallabag_button_vars.keyboard_shortcut)
+  if (karakeep_button_vars.keyboard_shortcut)
   {
     document.addEventListener('keydown', function (e)
     {
@@ -41,7 +41,7 @@ async function documentReady()
         return;
       }
 
-      if (e.key === wallabag_button_vars.keyboard_shortcut)
+      if (e.key === karakeep_button_vars.keyboard_shortcut)
       {
         var active = document.querySelector("#stream .flux.active");
         if (!active)
@@ -49,40 +49,40 @@ async function documentReady()
           return;
         }
 
-        var wallabagButton = active.querySelector("a.wallabagButton");
-        if (!wallabagButton)
+        var karakeepButton = active.querySelector("a.karakeepButton");
+        if (!karakeepButton)
         {
           return;
         }
 
-        add_to_wallabag(wallabagButton, active);
+        add_to_karakeep(karakeepButton, active);
       }
     });
   }
 }
 
-function requestFailed(activeId, wallabagButtonImg, loadingAnimation)
+function requestFailed(activeId, karakeepButtonImg, loadingAnimation)
 {
   delete pending_entries[activeId];
 
-  wallabagButtonImg.classList.remove("disabled");
+  karakeepButtonImg.classList.remove("disabled");
   loadingAnimation.classList.add("disabled");
 
   badAjax(this.status == 403);
 }
 
-async function add_to_wallabag(wallabagButton, active)
+async function add_to_karakeep(karakeepButton, active)
 {
-  const url = wallabagButton.getAttribute("href");
+  const url = karakeepButton.getAttribute("href");
   if (!url)
   {
     return;
   }
 
-  let wallabagButtonImg = wallabagButton.querySelector("img");
-  wallabagButtonImg.classList.add("disabled");
+  let karakeepButtonImg = karakeepButton.querySelector("img");
+  karakeepButtonImg.classList.add("disabled");
 
-  let loadingAnimation = wallabagButton.querySelector(".lds-dual-ring");
+  let loadingAnimation = karakeepButton.querySelector(".lds-dual-ring");
   loadingAnimation.classList.remove("disabled");
 
   let activeId = active.getAttribute('id');
@@ -108,32 +108,32 @@ async function add_to_wallabag(wallabagButton, active)
     {
       delete pending_entries[activeId];
 
-      wallabagButtonImg.classList.remove("disabled");
+      karakeepButtonImg.classList.remove("disabled");
       loadingAnimation.classList.add("disabled");
 
       if (!response.ok)
       {
         if (response.status === 404)
         {
-          openNotification(wallabag_button_vars.i18n.article_not_found, 'wallabag_button_bad');
+          openNotification(karakeep_button_vars.i18n.article_not_found, 'karakeep_button_bad');
         }
-        requestFailed(activeId, wallabagButtonImg, loadingAnimation);
+        requestFailed(activeId, karakeepButtonImg, loadingAnimation);
         return;
       }
 
       let json = await response.json();
       if (!json)
       {
-        requestFailed(activeId, wallabagButtonImg, loadingAnimation);
-        openNotification(wallabag_button_vars.i18n.failed_to_add_article_to_wallabag.replace('%s', json.errorCode), 'wallabag_button_bad');
+        requestFailed(activeId, karakeepButtonImg, loadingAnimation);
+        openNotification(karakeep_button_vars.i18n.failed_to_add_article_to_karakeep.replace('%s', json.errorCode), 'karakeep_button_bad');
         return;
       }
 
-      wallabagButtonImg.setAttribute("src", wallabag_button_vars.icons.added_to_wallabag);
-      openNotification(wallabag_button_vars.i18n.added_article_to_wallabag.replace('%s', json.response.title), 'wallabag_button_good');
+      karakeepButtonImg.setAttribute("src", karakeep_button_vars.icons.added_to_karakeep);
+      openNotification(karakeep_button_vars.i18n.added_article_to_karakeep.replace('%s', json.response.title), 'karakeep_button_good');
     })
     .catch((e) =>
     {
-      requestFailed(activeId, wallabagButtonImg, loadingAnimation);
+      requestFailed(activeId, karakeepButtonImg, loadingAnimation);
     });
 }

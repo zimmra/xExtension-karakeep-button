@@ -1,6 +1,6 @@
 <?php
 
-class WallabagButtonExtension extends Minz_Extension
+class KarakeepButtonExtension extends Minz_Extension
 {
   #[\Override]
   public function init(): void
@@ -9,9 +9,9 @@ class WallabagButtonExtension extends Minz_Extension
 
     Minz_View::appendScript($this->getFileUrl('script.js', 'js'), false, false, false);
     Minz_View::appendStyle($this->getFileUrl('style.css', 'css'));
-    Minz_View::appendScript(strval(_url('wallabagButton', 'jsVars')), false, true, false);
+    Minz_View::appendScript(strval(_url('karakeepButton', 'jsVars')), false, true, false);
 
-    $this->registerController('wallabagButton');
+    $this->registerController('karakeepButton');
     $this->registerViews();
   }
 
@@ -22,7 +22,7 @@ class WallabagButtonExtension extends Minz_Extension
 
     if (Minz_Request::isPost()) {
       $keyboard_shortcut = Minz_Request::paramString('keyboard_shortcut');
-      FreshRSS_Context::userConf()->_attribute('wallabag_keyboard_shortcut', $keyboard_shortcut);
+      FreshRSS_Context::userConf()->_attribute('karakeep_keyboard_shortcut', $keyboard_shortcut);
       FreshRSS_Context::userConf()->save();
     }
   }

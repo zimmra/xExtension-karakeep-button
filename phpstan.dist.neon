@@ -11,7 +11,7 @@ parameters:
 			- ../FreshRSS
 			- vendor/
 			- fresh_rss_data/
-			- wallabag_data/
+			- karakeep_data/
 		analyseAndScan:
 			- .github/
 			- .vscode/

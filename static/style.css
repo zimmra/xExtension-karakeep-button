@@ -1,25 +1,17 @@
-.notification.wallabag_button_good,
-.notification.wallabag_button_bad {
+.notification.karakeep_button_good,
+.notification.karakeep_button_bad {
   position: fixed;
   color: #fff;
   left: 20%;
   right: 20%;
 }
 
-.notification.wallabag_button_bad {
+.notification.karakeep_button_bad {
   background: #e74c3c;
 }
 
-.notification.wallabag_button_good {
+.notification.karakeep_button_good {
   background: #1abc9c;
-}
-
-input#client_id {
-  width: 300px;
-}
-
-input#client_secret {
-  width: 300px;
 }
 
 input#keyboard_shortcut {
@@ -30,7 +22,7 @@ input#keyboard_shortcut {
   list-style-type: decimal;
 }
 
-.item-element.wallabagButton .disabled {
+.item-element.karakeepButton .disabled {
   display: none !important;
 }
 
