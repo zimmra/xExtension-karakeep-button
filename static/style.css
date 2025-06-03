@@ -18,10 +18,6 @@ input#keyboard_shortcut {
   width: 30px;
 }
 
-.listedNumbers {
-  list-style-type: decimal;
-}
-
 .item-element.karakeepButton .disabled {
   display: none !important;
 }

@@ -2,3 +2,5 @@
 fresh_rss_data/
 vendor/
 karakeep_data/
+.original-code-reference/
+karakeep-openapi/

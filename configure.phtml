@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /** @var KarakeepButtonExtension $this */
 $instance_url = FreshRSS_Context::userConf()->attributeString('karakeep_instance_url');
+$api_key = FreshRSS_Context::userConf()->attributeString('karakeep_api_key');
 $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('karakeep_keyboard_shortcut');
 ?>
 
@@ -11,7 +12,7 @@ $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('karakeep_key
   <div class="form-group">
     <label class="group-name" for="keyboard_shortcut"><?= _t('ext.karakeepButton.configure.keyboard_shortcut'); ?></label>
     <div class="group-controls">
-      <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?= $keyboard_shortcut; ?>">
+      <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?= htmlspecialchars($keyboard_shortcut); ?>">
     </div>
   </div>
 
@@ -22,15 +23,28 @@ $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('karakeep_key
   </div>
 </form>
 
-<?php if ($this->isEnabled()) : ?>
-  <p class="alert alert-success">
-    <?= _t('ext.karakeepButton.configure.connected_to_karakeep', $instance_url); ?>
-  </p>
-  <form action="<?= _url('karakeepButton', 'revokeAccess'); ?>" method="post">
+<?php if ($this->isEnabled() && (empty($instance_url) || empty($api_key))) : ?>
+  <form action="<?= _url('karakeepButton', 'configure'); ?>" method="post">
     <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
+    <div class="form-group">
+      <label class="group-name" for="instance_url"><?= _t('ext.karakeepButton.configure.instance_url'); ?></label>
+      <div class="group-controls">
+        <input type="url" name="instance_url" id="instance_url" value="<?= htmlspecialchars($instance_url); ?>" placeholder="https://your-karakeep-instance.com" required>
+      </div>
+
+      <label class="group-name" for="api_key"><?= _t('ext.karakeepButton.configure.api_key'); ?></label>
+      <div class="group-controls">
+        <input type="text" name="api_key" id="api_key" value="<?= htmlspecialchars($api_key); ?>" placeholder="your-api-key" required>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <?= _t('ext.karakeepButton.configure.instructions'); ?>
+    </div>
+
     <div class="form-group form-actions">
       <div class="group-controls">
-        <button type="submit" class="btn btn-important"><?= _t('ext.karakeepButton.configure.revoke_access'); ?></button>
+        <button type="submit" class="btn btn-important"><?= _t('ext.karakeepButton.configure.connect_to_karakeep'); ?></button>
       </div>
     </div>
   </form>
@@ -38,4 +52,18 @@ $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('karakeep_key
   <p class="alert alert-error">
     <?= _t('ext.karakeepButton.configure.extension_disabled'); ?>
   </p>
+<?php endif ?>
+
+<?php if (!empty($instance_url) && !empty($api_key)) : ?>
+  <p class="alert alert-success">
+    <?= _t('ext.karakeepButton.configure.connected_to_karakeep', $instance_url); ?>
+  </p>
+  <form action="<?= _url('karakeepButton', 'clearConfig'); ?>" method="post">
+    <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
+    <div class="form-group form-actions">
+      <div class="group-controls">
+        <button type="submit" class="btn btn-important"><?= _t('ext.karakeepButton.configure.clear_config'); ?></button>
+      </div>
+    </div>
+  </form>
 <?php endif ?>

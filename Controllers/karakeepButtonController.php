@@ -30,7 +30,7 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
     header('Content-Type: application/javascript; charset=utf-8');
   }
 
-  public function requestAccessAction(): void
+  public function configureAction(): void
   {
     $instance_url = Minz_Request::paramString('instance_url');
     $api_key = Minz_Request::paramString('api_key');
@@ -45,10 +45,10 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
     FreshRSS_Context::userConf()->save();
 
     $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Karakeep Button'));
-    Minz_Request::good(_t('ext.karakeepButton.notifications.authorized_success'), $url_redirect);
+    Minz_Request::good(_t('ext.karakeepButton.notifications.config_saved'), $url_redirect);
   }
 
-  public function revokeAccessAction(): void
+  public function clearConfigAction(): void
   {
     FreshRSS_Context::userConf()->_attribute('karakeep_instance_url');
     FreshRSS_Context::userConf()->_attribute('karakeep_api_key');
@@ -107,6 +107,12 @@ class FreshExtension_karakeepButton_Controller extends Minz_ActionController
   private function curlPostRequest(string $endpoint, array $post_data, bool $with_token = false): array
   {
     $instance_url = FreshRSS_Context::userConf()->attributeString('karakeep_instance_url');
+    
+    // Handle trailing slash
+    if (substr($instance_url, -1) == '/') {
+      $instance_url = substr($instance_url, 0, -1);
+    }
+    
     $curl = $this->getCurlBase($instance_url . $endpoint, $with_token);
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($post_data, JSON_UNESCAPED_UNICODE));
