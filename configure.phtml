@@ -1,20 +1,15 @@
 <?php
 
 declare(strict_types=1);
-/** @var WallabagButtonExtension $this */
-$instance_url = FreshRSS_Context::userConf()->attributeString('wallabag_instance_url');
-$client_id = FreshRSS_Context::userConf()->attributeString('wallabag_client_id');
-$client_secret = FreshRSS_Context::userConf()->attributeString('wallabag_client_secret');
-$username = FreshRSS_Context::userConf()->attributeString('wallabag_username');
-$access_token = FreshRSS_Context::userConf()->attributeString('wallabag_access_token');
-$refresh_token = FreshRSS_Context::userConf()->attributeString('wallabag_refresh_token');
-$keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('wallabag_keyboard_shortcut');
+/** @var KarakeepButtonExtension $this */
+$instance_url = FreshRSS_Context::userConf()->attributeString('karakeep_instance_url');
+$keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('karakeep_keyboard_shortcut');
 ?>
 
 <form action="<?= _url('extension', 'configure', 'e', urlencode($this->getName())) ?>" method="post">
   <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken() ?>" />
   <div class="form-group">
-    <label class="group-name" for="keyboard_shortcut"><?= _t('ext.wallabagButton.configure.keyboard_shortcut'); ?></label>
+    <label class="group-name" for="keyboard_shortcut"><?= _t('ext.karakeepButton.configure.keyboard_shortcut'); ?></label>
     <div class="group-controls">
       <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?= $keyboard_shortcut; ?>">
     </div>
@@ -27,62 +22,20 @@ $keyboard_shortcut = FreshRSS_Context::userConf()->attributeString('wallabag_key
   </div>
 </form>
 
-<?php if ($this->isEnabled() && (empty($username) || empty($instance_url) || empty($client_id) || empty($client_secret) || empty($access_token))) : ?>
-  <form action="<?= _url('wallabagButton', 'requestAccess'); ?>" method="post">
+<?php if ($this->isEnabled()) : ?>
+  <p class="alert alert-success">
+    <?= _t('ext.karakeepButton.configure.connected_to_karakeep', $instance_url); ?>
+  </p>
+  <form action="<?= _url('karakeepButton', 'revokeAccess'); ?>" method="post">
     <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
-    <div class="form-group">
-      <label class="group-name" for="instance_url"><?= _t('ext.wallabagButton.configure.instance_url'); ?></label>
-      <div class="group-controls">
-        <input type="url" name="instance_url" id="instance_url" title="Please enter a valid URL starting with http:// or https://" value="<?= $instance_url; ?>" required>
-      </div>
-
-      <label class="group-name" for="username"><?= _t('ext.wallabagButton.configure.username'); ?></label>
-      <div class="group-controls">
-        <input type="text" name="username" id="username" value="<?= $username; ?>" required>
-      </div>
-
-      <label class="group-name" for="password"><?= _t('ext.wallabagButton.configure.password'); ?></label>
-      <div class="group-controls">
-        <input type="password" name="password" id="password" value="" required>
-      </div>
-
-      <label class="group-name" for="client_id"><?= _t('ext.wallabagButton.configure.client_id'); ?></label>
-      <div class="group-controls">
-        <input type="text" name="client_id" id="client_id" value="<?= $client_id; ?>" required>
-      </div>
-
-      <label class="group-name" for="client_secret"><?= _t('ext.wallabagButton.configure.client_secret'); ?></label>
-      <div class="group-controls">
-        <input type="password" name="client_secret" id="client_secret" value="<?= $client_secret; ?>" required>
-      </div>
-    </div>
-
-    <div class="alert alert-warn">
-      <?= _t('ext.wallabagButton.configure.connect_description'); ?>
-    </div>
-
     <div class="form-group form-actions">
       <div class="group-controls">
-        <button type="submit" class="btn btn-important"><?= _t('ext.wallabagButton.configure.connect_to_wallabag'); ?></button>
+        <button type="submit" class="btn btn-important"><?= _t('ext.karakeepButton.configure.revoke_access'); ?></button>
       </div>
     </div>
   </form>
 <?php elseif (!$this->isEnabled()) : ?>
   <p class="alert alert-error">
-    <?= _t('ext.wallabagButton.configure.extension_disabled'); ?>
+    <?= _t('ext.karakeepButton.configure.extension_disabled'); ?>
   </p>
-<?php endif ?>
-
-<?php if (!empty($username) && !empty($instance_url) && !empty($client_id) && !empty($client_secret) && !empty($access_token) && !empty($refresh_token)) : ?>
-  <p class="alert alert-success">
-    <?= _t('ext.wallabagButton.configure.connected_to_wallabag', $username, $instance_url); ?>
-  </p>
-  <form action="<?= _url('wallabagButton', 'revokeAccess'); ?>" method="post">
-    <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
-    <div class="form-group form-actions">
-      <div class="group-controls">
-        <button type="submit" class="btn btn-important"><?= _t('ext.wallabagButton.configure.revoke_access'); ?></button>
-      </div>
-    </div>
-  </form>
 <?php endif ?>

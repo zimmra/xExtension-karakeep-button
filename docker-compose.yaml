@@ -1,26 +1,63 @@
 services:
   freshrss:
     image: freshrss/freshrss:latest
-    container_name: freshrss_wallabag
+    container_name: freshrss_karakeep
     restart: unless-stopped
     logging:
       options:
         max-size: 10m
     volumes:
-      - ./:/var/www/FreshRSS/extensions/freshrss-wallabag-button:ro
+      - ./:/var/www/FreshRSS/extensions/freshrss-karakeep-button:ro
       - ./fresh_rss_data:/var/www/FreshRSS/data:rw
     ports:
       - 8080:80
     depends_on:
-      - wallabag
+      - web
 
-  wallabag:
-    image: wallabag/wallabag
-    container_name: wallabag
-    environment:
-      SYMFONY__ENV__DOMAIN_NAME: "http://localhost:8081"
-    ports:
-      - 8081:80
+  web:
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
+    restart: unless-stopped
     volumes:
-      - ./wallabag_data/images:/var/www/wallabag/web/assets/images:rw
-      - ./wallabag_data/data:/var/www/wallabag/data:rw
+      # By default, the data is stored in a docker volume called "data".
+      # If you want to mount a custom directory, change the volume mapping to:
+      # - /path/to/your/directory:/data
+      - data:/data
+    ports:
+      - 3000:3000
+    environment:
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      KARAKEEP_VERSION: release
+      NEXTAUTH_SECRET: super_random_string
+      MEILI_MASTER_KEY: another_random_string
+      NEXTAUTH_URL: http://localhost:3000
+      # OPENAI_API_KEY: ...
+
+      # You almost never want to change the value of the DATA_DIR variable.
+      # If you want to mount a custom directory, change the volume mapping above instead.
+      DATA_DIR: /data # DON'T CHANGE THIS
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:123
+    restart: unless-stopped
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+  meilisearch:
+    image: getmeili/meilisearch:v1.13.3
+    restart: unless-stopped
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+      KARAKEEP_VERSION: release
+      NEXTAUTH_SECRET: super_random_string
+      MEILI_MASTER_KEY: another_random_string
+      NEXTAUTH_URL: http://localhost:3000
+    volumes:
+      - meilisearch:/meili_data
+
+volumes:
+  meilisearch:
+  data:

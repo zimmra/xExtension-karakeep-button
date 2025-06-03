@@ -1,8 +1,8 @@
 {
-  "name": "Wallabag Button",
-  "author": "Joedmin",
-  "description": "Add articles to Wallabag with one simple button click or a keyboard shortcut.",
-  "version": 0.5,
-  "entrypoint": "WallabagButton",
+  "name": "Karakeep Button",
+  "author": "zimmra",
+  "description": "Add articles to Karakeep with one simple button click or a keyboard shortcut.",
+  "version": 0.1,
+  "entrypoint": "KarakeepButton",
   "type": "user"
 }
