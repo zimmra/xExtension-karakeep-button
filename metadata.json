@@ -2,7 +2,7 @@
   "name": "Karakeep Button",
   "author": "zimmra",
   "description": "Add articles to Karakeep with one simple button click or a keyboard shortcut.",
-  "version": 0.1,
+  "version": 1.1,
   "entrypoint": "KarakeepButton",
   "type": "user"
 }
